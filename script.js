@@ -1,75 +1,22 @@
-class Player {
-    constructor(name) {
+class Card {
+    constructor(name, cost, gil) {
         this.name = name;
+        this.cost = cost;
+        this.gil = gil;
     }
 }
-class Ninja_cards extends Player {
-    constructor(name, gil = 10, power = 0, resilience = 0, cost = 0) {
-        super(name);
-        this.gil = gil;
+class Unit extends Card {
+    constructor(name, cost, power = 0, resilience = 0) {
+        super(name, cost);
         this.power = power;
         this.resilience = resilience;
-        this.cost = cost;
     }
-    redBeltNinja() {
-        this.cost = 3
-        if (this.gil >= this.gil - this.cost) {
-            this.gil -= this.cost;
-            this.power += 3;
-            this.resilience += 4;
-            console.log(`${this.name} used the Red Belt Ninja Card`);
-        } else {
-            console.log('Not Enough Gil!');
-        }
-    }
-    blackBeltNinja() {
-        this.cost = 4
-        if (this.gil >= this.gil - this.cost) {
-            this.gil -= this.cost;
-            this.power += 5;
-            this.resilience += 4;
-            console.log(`${this.name} used the Black Belt Ninja Card`);
-        } else {
-            console.log('Not Enough Gil!');
-        }
-    }
-}
-class Ninjas_card extends Ninja_cards {
-    constructor(name) {
-        super(name, 10, 0, 0, 0)
-    }
-    hardAlgorithm() {
-        this.cost = 2;
-        if (this.gil >= this.gil - this.cost) {
-            this.gil -= this.cost;
-            this.resilience += 3;
-            console.log(`${this.name} healed themselves with a Hard Algo and increased their resilience by 3!`)
-        } else {
-            console.log('Not Enough Gil!');
-        }
-    }
-    unhandledPromiseRejection(target) {
-        this.cost = 1;
-        if (this.gil >= this.gil - this.cost) {
-            this.gil -= this.cost;
-            target.resilience -= 2;
-            console.log(`${this.name} attacked ${target.name} with Unhandled Promise Rejection attack and decreased their resilience by 2!`)
-        } else {
-            console.log('Not Enough Gil!');
-        }
-    }
-    pairProgramming() {
-        this.cost = 3;
-        if (this.gil >= this.gil - this.cost) {
-            this.gil -= this.cost;
-            this.power += 2;
-            console.log(`${this.name} called a friend to Pair Program and increased their attack power by 2!`)
-        } else {
-            console.log('Not Enough Gil!');
-        }
+    show() {
+        console.log(`Name : ${this.name}, Power: ${this.power}, Resilience:  ${this.resilience}`)
+
     }
     attack(target) {
-        target.res -= this.power;
+        target.resilience -= this.power;
         console.log(`${this.name} attacked ${target.name} dealing ${this.power} damage!`)
         if (target.resilience > this.power) {
             console.log(`${target.name} has ${target.resilience} health remaining..`)
@@ -78,24 +25,37 @@ class Ninjas_card extends Ninja_cards {
         }
     }
 }
+class Effect extends Card {
+    constructor(name, cost, text, stat, magnitude) {
+        super(name, cost)
+        this.text = text;
+        this.stat = stat;
+        this.magnitude = magnitude;
+    }
+    move(target) {
+        if (this.stat == 'resilience') {
+            target.resilience += this.magnitude;
+            console.log(`${target.name}'s resilience stat has been changed by ${this.magnitude}`)
+        } else {
+            target.power += this.magnitude;
+            console.log(`${target.name}'s power stat has been changed by ${this.magnitude}`)
+        }
+    }
+}
 
-const player1 = new Ninjas_card("Christian");
-console.log(player1);
-player1.redBeltNinja();
-console.log(player1);
+const red_belt_ninja = new Unit('Kelvin', 3, 4, 3)
+const black_belt_ninja = new Unit('Christian', 5, 4, 4)
 
-player1.hardAlgorithm();
-console.log(player1);
+const hardAlgorithm = new Effect('Hard Algorithm', 2, "increase target resilience by 3", "resilience", 3)
+const unhandledPromiseRejection = new Effect('Unhandled Promise Rejections', 1, "reduce resilience by 2", "resilience", -2)
+const pairProgramming = new Effect('Pair Programming', 3, "increases power by 2", "power", 2)
 
-const player2 = new Ninjas_card("Preston");
-console.log(player2);
-player2.blackBeltNinja();
-console.log(player2);
-
-player2.unhandledPromiseRejection(player1);
-console.log(player1);
-
-player1.pairProgramming();
-console.log(player1);
-
-player1.attack(player2);
+console.log('Welcome the Red Belt Challnger')
+red_belt_ninja.show();
+hardAlgorithm.move(red_belt_ninja);
+red_belt_ninja.show();
+console.log('Welcome the Black Belt Challnger')
+black_belt_ninja.show();
+unhandledPromiseRejection.move(red_belt_ninja);
+pairProgramming.move(red_belt_ninja);
+red_belt_ninja.attack(black_belt_ninja);
